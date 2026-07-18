@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "./src", // 👈 এইটা মাস্ট লাগবে, টাইপস্ক্রিপ্টকে রুট ফোল্ডার চেনানোর জন্য
+    "outDir": "./dist", // 👈 বিল্ড ফাইলগুলো এখানে জমা হবে
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"] // 👈 টাইপস্ক্রিপ্ট শুধু src এর ভেতরের ফাইলগুলোই রিড করবে
+}

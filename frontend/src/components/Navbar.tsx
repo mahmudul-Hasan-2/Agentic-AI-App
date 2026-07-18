@@ -17,7 +17,6 @@ import {
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  // টেস্ট করার জন্য এটিকে true বা false করে দেখতে পারো মামা
   const [auth, setAuth] = useState({ isLoggedIn: false });
 
   const loggedOutRoutes = [
@@ -37,21 +36,23 @@ export default function Navbar() {
   const activeRoutes = auth.isLoggedIn ? loggedInRoutes : loggedOutRoutes;
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-brand-primary/80 backdrop-blur-md border-b border-brand-accent/10 text-white transition-all duration-300">
+    <nav className="sticky top-0 z-50 w-full bg-[#0A0D14]/70 backdrop-blur-md border-b border-white/[0.05] text-white transition-all duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
-          {/* Logo with Unique AI Symbol */}
+          {/* Logo */}
           <Link
             href="/"
             className="flex items-center space-x-2 text-md font-semibold tracking-tight"
           >
-            <span className="p-1.5 bg-brand-secondary/20 border border-brand-secondary/40 rounded-lg text-brand-accent animate-pulse">
+            <span className="p-1.5 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-400 animate-pulse">
               <Cpu className="w-4 h-4" />
             </span>
-            <span>DevAgent</span>
+            <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              DevAgent
+            </span>
           </Link>
 
-          {/* Minimalist Desktop Nav */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-1">
             {activeRoutes.map((route) => {
               const Icon = route.icon;
@@ -62,8 +63,8 @@ export default function Navbar() {
                   href={route.path}
                   className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium tracking-wide transition-all duration-150 ${
                     isActive
-                      ? "bg-brand-secondary/20 text-brand-accent border border-brand-accent/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                      ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                      : "text-gray-400 hover:text-gray-200 hover:bg-white/[0.03]"
                   }`}
                 >
                   {Icon && <Icon className="w-3.5 h-3.5" />}
@@ -73,12 +74,12 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Action Buttons (Desktop) */}
+          {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-2">
             {auth.isLoggedIn ? (
               <button
                 onClick={() => setAuth({ isLoggedIn: false })}
-                className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs bg-red-950/40 border border-red-500/20 text-red-400 hover:bg-red-900/40 transition-all"
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs bg-red-950/30 border border-red-500/20 text-red-400 hover:bg-red-900/30 transition-all"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Exit</span>
@@ -87,14 +88,14 @@ export default function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                  className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs text-gray-400 hover:text-white hover:bg-white/[0.03] transition-all"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
                   <span>Sign In</span>
                 </Link>
                 <Link
                   href="/register"
-                  className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs bg-brand-secondary border border-brand-accent/20 text-white hover:bg-opacity-90 transition-all"
+                  className="flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs bg-cyan-600 border border-cyan-500/30 text-white hover:bg-cyan-500 transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)]"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>Register</span>
@@ -121,7 +122,7 @@ export default function Navbar() {
 
       {/* Mobile Nav Menu */}
       {isOpen && (
-        <div className="md:hidden bg-brand-primary border-t border-brand-accent/10 px-4 py-3 space-y-1">
+        <div className="md:hidden bg-[#0A0D14] border-t border-white/[0.05] px-4 py-3 space-y-1">
           {activeRoutes.map((route) => (
             <Link
               key={route.path}
@@ -129,23 +130,21 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className={`block px-3 py-2 rounded-md text-sm ${
                 pathname === route.path
-                  ? "bg-brand-secondary text-white"
-                  : "text-gray-400 hover:bg-white/5"
+                  ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                  : "text-gray-400 hover:bg-white/[0.03]"
               }`}
             >
               {route.label}
             </Link>
           ))}
-
-          {/* Mobile Auth Actions */}
-          <div className="pt-2 border-t border-brand-accent/10 space-y-1">
+          <div className="pt-2 border-t border-white/[0.05] space-y-1">
             {auth.isLoggedIn ? (
               <button
                 onClick={() => {
                   setAuth({ isLoggedIn: false });
                   setIsOpen(false);
                 }}
-                className="w-full flex items-center justify-center space-x-1 px-3 py-2 rounded-md text-sm bg-red-950/40 text-red-400"
+                className="w-full flex items-center justify-center space-x-1 px-3 py-2 rounded-md text-sm bg-red-950/30 text-red-400"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Exit Workspace</span>
@@ -155,14 +154,14 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-white/5"
+                  className="block text-center px-3 py-2 rounded-md text-sm text-gray-400 hover:bg-white/[0.03]"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center px-3 py-2 rounded-md text-sm bg-brand-secondary text-white"
+                  className="block text-center px-3 py-2 rounded-md text-sm bg-cyan-600 text-white"
                 >
                   Register
                 </Link>

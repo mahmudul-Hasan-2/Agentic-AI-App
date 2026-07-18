@@ -37,6 +37,9 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         {/* Global Footer */}
         <Footer />
+        {/* Custom CSS/JS loaded from public/custom.* */}
+        <link rel="stylesheet" href="/custom.css" />
+        <script src="/custom.js" defer />
       </body>
     </html>
   );
