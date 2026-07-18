@@ -1,45 +1,44 @@
 import type { Metadata } from "next";
-import { Fira_Code } from "next/font/google"; // ফন্ট পরিবর্তন করা হলো
+import { Fira_Code, Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import QueryProvider from "@/components/QueryProvider";
+import { Toaster } from "sonner";
 
-// Fira Code ফন্ট কনফিগারেশন
-const firaCode = Fira_Code({
+const FiraCode = Fira_Code({
+  variable: "--font-fira-code",
+  weight: ["600", "700"],
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], // প্রয়োজনীয় সব ওয়েট নেওয়া হলো
-  variable: "--font-fira-code", // সিএসএস ভ্যারিয়েবল হিসেবে ব্যবহারের জন্য
 });
 
-const title = "DevAgent";
-const description =
-  "Production-ready Agentic AI platform for software projects.";
-
 export const metadata: Metadata = {
-  title,
-  description,
+  title: "DevAgent AI - Elite Agentic AI Workspace",
+  description:
+    "Production-ready Agentic AI application to build and scale with LLMs.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      {/* ফন্টটি বডিতে অ্যাপ্লাই করা হলো এবং টেক্সটের কালার ব্র্যান্ড প্রাইমারি দেওয়া হলো */}
       <body
-        className={`${firaCode.className} bg-slate-50 text-brand-primary flex flex-col min-h-screen`}
+        className={`${FiraCode.variable}  antialiased bg-[#0F172A] text-slate-100 min-h-screen flex flex-col`}
       >
-        {/* Sticky Global Navbar */}
-        <Navbar />
-        {/* Dynamic Pages */}
-        <main className="flex-grow">{children}</main>
-        {/* Global Footer */}
-        <Footer />
-        {/* Custom CSS/JS loaded from public/custom.* */}
-        <link rel="stylesheet" href="/custom.css" />
-        <script src="/custom.js" defer />
+        <QueryProvider>
+          <Toaster richColors theme="dark" closeButton />
+          {/* রিকোয়ারমেন্ট অনুযায়ী Sticky/Fixed Navbar */}
+          <Navbar />
+
+          {/* মেইন কন্টেন্ট এরিয়া */}
+          <main className="flex-grow">{children}</main>
+
+          {/* গ্লোবাল ফুটার */}
+          <Footer />
+        </QueryProvider>
       </body>
     </html>
   );
