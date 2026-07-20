@@ -46,7 +46,7 @@ export default function Navbar() {
   // 🏠 লগআউট থাকা অবস্থায় রাউটসমূহ
   const loggedOutRoutes = [
     { label: "Home", path: "/", icon: Terminal },
-    { label: "Explore", path: "/explore", icon: Compass },
+    { label: "Explore", path: "/projects", icon: Compass },
     { label: "About", path: "/about", icon: Cpu },
   ];
 

@@ -44,11 +44,11 @@ export default function HeroBanner() {
           </Link>
 
           <Link
-            href="/items/add"
+            href="/projects/add"
             className="w-full sm:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-lg text-xs font-medium bg-white/[0.03] border border-white/[0.08] text-gray-300 hover:text-white hover:bg-white/[0.07] transition-all duration-150"
           >
             <Terminal className="w-3.5 h-3.5" />
-            <span>Post a Job</span>
+            <span>Post a Project</span>
           </Link>
         </div>
 

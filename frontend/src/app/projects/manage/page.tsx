@@ -35,12 +35,12 @@ export default function ManageProjectsPage() {
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // ডিলিট মোডালের জন্য নতুন স্টেট
+  // ডিলিট মোডালের জন্য স্টেট
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // ইউজারের আইডি দিয়ে ডেটা ফেচ করা
+  // ইউজারের আইডি দিয়ে ডেটা ফেচ করা (placeholderData যুক্ত করা হয়েছে যাতে পেজ জাম্প না করে)
   const {
     data: projects,
     isLoading: isProjectsLoading,
@@ -56,6 +56,7 @@ export default function ManageProjectsPage() {
       return res.json();
     },
     enabled: !!userId,
+    placeholderData: (previousData) => previousData,
   });
 
   // পেন আইকনে ক্লিক করলে এপিআই কল করে ডেটা এনে মোডাল ওপেন করা
@@ -142,7 +143,7 @@ export default function ManageProjectsPage() {
     setIsDeleteModalOpen(true);
   };
 
-  // ফাইনাল ডিলিট রিকুয়েস্ট হ্যান্ডলার
+  // ফাইনাল ডিলিট রিকুয়েস্ট হ্যান্ডলার
   const handleDeleteExecute = async () => {
     if (!projectToDelete) return;
 
@@ -236,7 +237,7 @@ export default function ManageProjectsPage() {
                     <Edit className="w-4 h-4" />
                   </button>
 
-                  {/* ট্র্যাশ আইকন (মডার্ন ডিলিট মোডাল ট্রিগার করবে) */}
+                  {/* ট্র্যাশ আইকন */}
                   <button
                     onClick={() => confirmDelete(project)}
                     className="p-2 bg-red-950/30 border border-red-900/40 text-red-400 hover:bg-red-900/40 rounded-lg transition-colors"
