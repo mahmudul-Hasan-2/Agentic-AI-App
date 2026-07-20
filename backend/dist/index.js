@@ -56,9 +56,61 @@ app.post("/api/project", (req, res) => __awaiter(void 0, void 0, void 0, functio
         .insertOne(Object.assign(Object.assign({}, req.body), { createdAt: new Date() }));
     res.status(201).json(result);
 }));
-// app.delete("/api/project", async (req, res) => {
-//   await dbInstance
-//     .collection("projects")
-//     .deleteOne({ _id: new ObjectId(req.params.id) });
-//   res.status(200).json({ message: "Deleted" });
-// });
+// GET: /api/projects/user?userId=xyz
+app.get("/api/projects/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.query;
+        if (!userId) {
+            return res.status(400).json({ error: "User ID is required." });
+        }
+        // ডাটাবেজ থেকে নির্দিষ্ট ইউজারের প্রজেক্টগুলো ফিল্টার করা
+        const projects = yield dbInstance
+            .collection("projects")
+            .find({ userId: userId }) // প্রোজেক্টে userId সেভ থাকতে হবে
+            .toArray();
+        res.status(200).json(projects);
+    }
+    catch (error) {
+        console.error("Fetch User Projects Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}));
+// PUT: /api/project/:id (প্রজেক্ট এডিট বা আপডেট করার জন্য)
+app.put("/api/project/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const updatedData = req.body;
+        const result = yield dbInstance
+            .collection("projects")
+            .updateOne({ _id: new ObjectId(id) }, { $set: updatedData });
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: "Project not found." });
+        }
+        res
+            .status(200)
+            .json({ success: true, message: "Project updated successfully!" });
+    }
+    catch (error) {
+        console.error("Update Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}));
+// DELETE: /api/project/:id (প্রজেক্ট ডিলিট করার জন্য)
+app.delete("/api/project/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const result = yield dbInstance
+            .collection("projects")
+            .deleteOne({ _id: new ObjectId(id) });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ error: "Project not found." });
+        }
+        res
+            .status(200)
+            .json({ success: true, message: "Project deleted successfully!" });
+    }
+    catch (error) {
+        console.error("Delete Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}));

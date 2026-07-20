@@ -1,9 +1,12 @@
 "use client";
 
+import { useSession } from "@/lib/auth-client";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
 const AddNewProjectPage = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
   const [formData, setFormData] = useState({
     title: "",
     category: "AI Agent", // ডিফল্ট একটি ক্যাটাগরি সেট করে দেওয়া হলো
@@ -32,11 +35,14 @@ const AddNewProjectPage = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: formData.title }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: formData.title }),
+        },
+      );
       const data = await response.json();
 
       if (response.ok) {
@@ -70,14 +76,18 @@ const AddNewProjectPage = () => {
         ? formData.requiredSkills.split(",").map((s) => s.trim())
         : [],
       imageUrl: formData.imageUrl,
+      userId: user?.id,
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/project", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/project`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
       if (response.ok) {
         toast.success("Project added successfully!");

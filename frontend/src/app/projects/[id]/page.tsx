@@ -12,7 +12,7 @@ interface ProjectDetailsPageProps {
 async function fetchProjectDetails(id: string) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/project/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/project/${id}`,
       {
         cache: "no-store",
       },
