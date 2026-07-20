@@ -6,15 +6,20 @@ import { toast } from "sonner";
 const AddNewProjectPage = () => {
   const [formData, setFormData] = useState({
     title: "",
+    category: "AI Agent", // ডিফল্ট একটি ক্যাটাগরি সেট করে দেওয়া হলো
     shortDescription: "",
     fullDescription: "",
-    price: "",
+    minBudget: "",
+    maxBudget: "",
+    requiredSkills: "",
     imageUrl: "",
   });
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -50,20 +55,40 @@ const AddNewProjectPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // ডাটাবেজের স্কিমা ফরম্যাটে রূপান্তর করা
+    const payload = {
+      title: formData.title,
+      category: formData.category,
+      shortDescription: formData.shortDescription,
+      fullDescription: formData.fullDescription,
+      estimatedBudgetRange: {
+        min: Number(formData.minBudget) || 0,
+        max: Number(formData.maxBudget) || 0,
+      },
+      requiredSkills: formData.requiredSkills
+        ? formData.requiredSkills.split(",").map((s) => s.trim())
+        : [],
+      imageUrl: formData.imageUrl,
+    };
+
     try {
       const response = await fetch("http://localhost:5000/api/project", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         toast.success("Project added successfully!");
         setFormData({
           title: "",
+          category: "AI Agent",
           shortDescription: "",
           fullDescription: "",
-          price: "",
+          minBudget: "",
+          maxBudget: "",
+          requiredSkills: "",
           imageUrl: "",
         });
       } else {
@@ -82,12 +107,26 @@ const AddNewProjectPage = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="title"
-          placeholder="Project Title"
+          placeholder="Project Title (e.g. AI Autonomous Customer Agent)"
           className="w-full border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           onChange={handleInputChange}
           value={formData.title}
           required
         />
+
+        {/* ক্যাটাগরি ড্রপডাউন */}
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleInputChange}
+          className="w-full border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          required
+        >
+          <option value="AI Agent">AI Agent</option>
+          <option value="Web App">Web App</option>
+          <option value="Automation">Automation</option>
+        </select>
+
         <input
           name="shortDescription"
           placeholder="Short Description"
@@ -116,14 +155,33 @@ const AddNewProjectPage = () => {
           </button>
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            name="minBudget"
+            type="number"
+            placeholder="Min Budget (e.g. 1200)"
+            className="w-full border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            onChange={handleInputChange}
+            value={formData.minBudget}
+          />
+          <input
+            name="maxBudget"
+            type="number"
+            placeholder="Max Budget (e.g. 3500)"
+            className="w-full border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            onChange={handleInputChange}
+            value={formData.maxBudget}
+          />
+        </div>
+
         <input
-          name="price"
-          type="number"
-          placeholder="Price"
+          name="requiredSkills"
+          placeholder="Required Skills (Comma separated: TypeScript, Next.js, Gemini API)"
           className="w-full border p-2 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           onChange={handleInputChange}
-          value={formData.price}
+          value={formData.requiredSkills}
         />
+
         <input
           name="imageUrl"
           placeholder="Image URL"

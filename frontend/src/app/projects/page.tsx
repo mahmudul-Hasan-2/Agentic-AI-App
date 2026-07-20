@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProjects, FilterParams } from "@/lib/api";
 import { Search, SlidersHorizontal, Loader2, DollarSign } from "lucide-react";
 import ProjectSkeleton from "@/components/ProjectSkeleton";
+import Link from "next/link";
 
 export default function ExploreProjectsPage() {
   // ফিল্টার স্টেটসমূহ
@@ -116,9 +117,10 @@ export default function ExploreProjectsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {projects?.map((project: any) => (
-              <div
+              <Link
                 key={project._id}
-                className="group bg-[#0A0D14]/70 border border-slate-800/40 rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 hover:bg-[#0E131F]/90 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(6,182,212,0.05)]"
+                href={`/projects/${project._id}`}
+                className="group bg-[#0A0D14]/70 border border-slate-800/40 rounded-xl p-5 flex flex-col justify-between hover:border-slate-700 hover:bg-[#0E131F]/90 transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(6,182,212,0.05)] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
@@ -161,7 +163,7 @@ export default function ExploreProjectsPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

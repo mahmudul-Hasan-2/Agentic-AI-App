@@ -11,8 +11,9 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { generateContent, handleChat } from "./controllers/ai.controller.js";
+import aiRoutes from "./routes/ai.routes.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(cors());
@@ -26,13 +27,28 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 });
 startServer();
+app.get("/", (req, res) => {
+    res.send("Hello World!");
+});
 // AI Routes
 app.post("/api/ai/generate", generateContent);
 app.post("/api/ai/chat", handleChat);
+app.post("/api/ai", aiRoutes);
 // CRUD Routes
 app.get("/api/projects", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const projects = yield dbInstance.collection("projects").find({}).toArray();
     res.json(projects);
+}));
+app.get("/api/project/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const project = yield dbInstance
+        .collection("projects")
+        .findOne({ _id: new ObjectId(id) });
+    if (!project) {
+        res.status(404).json({ error: "Project not found." });
+        return;
+    }
+    res.json(project);
 }));
 app.post("/api/project", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield dbInstance
