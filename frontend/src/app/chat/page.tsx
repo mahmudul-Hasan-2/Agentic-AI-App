@@ -27,14 +27,17 @@ export default function AIChatPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/ai/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          history: messages, // আগের চ্যাট হিস্ট্রি ব্যাকএন্ডে পাঠানো হচ্ছে
-          message: userMsgText, // বর্তমান মেসেজ
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/ai/chat`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            history: messages, // আগের চ্যাট হিস্ট্রি ব্যাকএন্ডে পাঠানো হচ্ছে
+            message: userMsgText, // বর্তমান মেসেজ
+          }),
+        },
+      );
 
       const data = await response.json();
 

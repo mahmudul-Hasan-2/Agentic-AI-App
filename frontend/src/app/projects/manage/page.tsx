@@ -11,6 +11,7 @@ import {
   FolderKanban,
   X,
   Save,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -34,7 +35,12 @@ export default function ManageProjectsPage() {
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // ইউজারের আইডি দিয়ে ডেটা ফেচ করা
+  // ডিলিট মোডালের জন্য নতুন স্টেট
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // ইউজারের আইডি দিয়ে ডেটা ফেচ করা
   const {
     data: projects,
     isLoading: isProjectsLoading,
@@ -130,21 +136,36 @@ export default function ManageProjectsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+  // ডিলিট মোডাল ওপেন করার ফাংশন
+  const confirmDelete = (project: any) => {
+    setProjectToDelete(project);
+    setIsDeleteModalOpen(true);
+  };
 
+  // ফাইনাল ডিলিট রিকুয়েস্ট হ্যান্ডলার
+  const handleDeleteExecute = async () => {
+    if (!projectToDelete) return;
+
+    setIsDeleting(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/project/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/project/${projectToDelete._id}`,
+        {
+          method: "DELETE",
+        },
+      );
       if (res.ok) {
         toast.success("Project deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setProjectToDelete(null);
         refetch();
       } else {
         toast.error("Failed to delete project.");
       }
     } catch (error) {
       toast.error("An error occurred!");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -206,7 +227,7 @@ export default function ManageProjectsPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  {/* পেন আইকন (এডিট মোডাল ওপেন করবে এবং এপিআই কল করবে) */}
+                  {/* পেন আইকন */}
                   <button
                     onClick={() => handleOpenEditModal(project._id)}
                     className="p-2 bg-cyan-950/30 border border-cyan-900/40 text-cyan-400 hover:bg-cyan-900/40 rounded-lg transition-colors"
@@ -215,9 +236,9 @@ export default function ManageProjectsPage() {
                     <Edit className="w-4 h-4" />
                   </button>
 
-                  {/* ট্র্যাশ আইকন (ডিলিট করবে) */}
+                  {/* ট্র্যাশ আইকন (মডার্ন ডিলিট মোডাল ট্রিগার করবে) */}
                   <button
-                    onClick={() => handleDelete(project._id)}
+                    onClick={() => confirmDelete(project)}
                     className="p-2 bg-red-950/30 border border-red-900/40 text-red-400 hover:bg-red-900/40 rounded-lg transition-colors"
                     title="Delete Project"
                   >
@@ -374,6 +395,57 @@ export default function ManageProjectsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* মডার্ন ডিলিট কনফার্মেশন মোডাল */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-[#0A0D14] border border-red-950/80 w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-red-950/40 border border-red-900/50 rounded-xl text-red-400">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  Delete Deployment
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Are you sure you want to delete{" "}
+                  <span className="text-slate-200 font-semibold">
+                    "{projectToDelete?.title}"
+                  </span>
+                  ? This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800/80">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleDeleteExecute}
+                className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-mono rounded-lg transition-colors shadow-lg shadow-red-950"
+              >
+                <Trash2 className="w-4 h-4 mr-1.5" />
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
           </div>
         </div>
       )}
