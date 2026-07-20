@@ -46,16 +46,16 @@ export default function Navbar() {
   // 🏠 লগআউট থাকা অবস্থায় রুটস (৩টি রাউট)
   const loggedOutRoutes = [
     { label: "Home", path: "/", icon: Terminal },
-    { label: "Explore", path: "/projects", icon: Compass },
+    { label: "Explore", path: "/explore", icon: Compass },
     { label: "About", path: "/about", icon: Cpu },
   ];
 
   // 🛡️ লগইন থাকা অবস্থায় রুটস (কমপক্ষে ৫টি ফিচার রাউটের অংশ)
   const loggedInRoutes = [
     { label: "Dashboard", path: "/", icon: Terminal },
-    { label: "Explore", path: "/projects", icon: Compass },
-    { label: "Post Brief", path: "/items/add", icon: FilePlus },
-    { label: "Manage", path: "/items/manage", icon: Settings },
+    { label: "Explore Project", path: "/projects", icon: Compass },
+    { label: "Post Brief", path: "/projects/add", icon: FilePlus },
+    { label: "Manage", path: "/projects/manage", icon: Settings },
   ];
 
   const activeRoutes = isLoggedIn ? loggedInRoutes : loggedOutRoutes;

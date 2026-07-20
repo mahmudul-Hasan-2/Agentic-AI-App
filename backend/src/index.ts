@@ -1,41 +1,48 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Request, Response } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
-import itemRoutes from "./routes/item.routes.js";
-import aiRoutes from "./routes/ai.routes.js";
-
-// এনভায়রনমেন্ট ভ্যারিয়েবল লোড করা
-dotenv.config();
+import { MongoClient, ObjectId, Db } from "mongodb";
+import { generateContent, handleChat } from "./controllers/ai.controller.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// গ্লোবাল মিডলওয়্যারস
 app.use(cors());
 app.use(express.json());
 
-// এপিআই রাউটস কনফিগারেশন
-app.use("/api/items", itemRoutes);
-app.use("/api/ai", aiRoutes);
+const client = new MongoClient(process.env.MONGO_URI as string);
+let dbInstance: Db;
 
-// বেস রুট (সার্ভার হেলথ চেক)
-app.get("/", (req: Request, res: Response) => {
-  res.send("⚡ DevAgent Native Backend is Flying!");
+const startServer = async () => {
+  await client.connect();
+  dbInstance = client.db(process.env.DB_NAME || "devagent_db");
+  console.log("Database Connected!");
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+};
+startServer();
+
+// AI Routes
+app.post("/api/ai/generate", generateContent);
+app.post("/api/ai/chat", handleChat);
+
+// CRUD Routes
+app.get("/api/projects", async (req, res) => {
+  const projects = await dbInstance.collection("projects").find({}).toArray();
+  res.json(projects);
 });
 
-// ডাটাবেস কানেক্ট করে সার্ভার স্টার্ট করার মেইন ফাংশন
-const startServer = async (): Promise<void> => {
-  try {
-    await connectDB();
+app.post("/api/project", async (req, res) => {
+  const result = await dbInstance
+    .collection("projects")
+    .insertOne({ ...req.body, createdAt: new Date() });
+  res.status(201).json(result);
+});
 
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is flying beautifully on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("❌ Failed to start the server:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
+// app.delete("/api/project", async (req, res) => {
+//   await dbInstance
+//     .collection("projects")
+//     .deleteOne({ _id: new ObjectId(req.params.id) });
+//   res.status(200).json({ message: "Deleted" });
+// });
