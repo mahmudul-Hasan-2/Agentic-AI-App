@@ -15,7 +15,6 @@ import { MongoClient, ObjectId } from "mongodb";
 import { generateContent, handleChat } from "./controllers/ai.controller.js";
 import aiRoutes from "./routes/ai.routes.js";
 const app = express();
-const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 const client = new MongoClient(process.env.MONGO_URI);
@@ -24,7 +23,6 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     yield client.connect();
     dbInstance = client.db(process.env.DB_NAME || "devagent_db");
     console.log("Database Connected!");
-    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 });
 startServer();
 app.get("/", (req, res) => {
@@ -114,3 +112,8 @@ app.delete("/api/project/:id", (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(500).json({ error: "Internal Server Error" });
     }
 }));
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}
+export default app;

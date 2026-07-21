@@ -8,7 +8,6 @@ import { generateContent, handleChat } from "./controllers/ai.controller.js";
 import aiRoutes from "./routes/ai.routes.js";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -20,7 +19,6 @@ const startServer = async () => {
   await client.connect();
   dbInstance = client.db(process.env.DB_NAME || "devagent_db");
   console.log("Database Connected!");
-  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
 };
 startServer();
 
@@ -126,3 +124,11 @@ app.delete("/api/project/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}
+
+export default app;
